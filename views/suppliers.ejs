@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head', { title: 'Aura - Proveedores' }) %>
+</head>
+<body>
+  <div class="shell">
+    <%- include('partials/nav', { active: 'proveedores' }) %>
+    <main class="shell-main">
+      <header class="page-header">
+        <div>
+          <h1>Proveedores y compras</h1>
+          <p class="page-subtitle">Registra compras para actualizar stock y costos</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-ghost" onclick="AuraUI.openModal('newSupplierModal')">Nuevo proveedor</button>
+          <button class="btn-primary" onclick="AuraUI.openModal('newPurchaseModal')">Registrar compra</button>
+        </div>
+      </header>
+
+      <section class="panel-grid">
+        <div class="panel">
+          <h2>Proveedores</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Nombre</th><th>Telefono</th><th></th></tr></thead>
+              <tbody>
+                <% suppliers.forEach(function(s) { %>
+                  <tr>
+                    <td><%= s.name %></td>
+                    <td><%= s.phone || '-' %></td>
+                    <td class="row-actions">
+                      <form action="/proveedores/<%= s.id %>/eliminar" method="POST" class="inline">
+                        <button type="submit" class="link-action link-danger">Eliminar</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }) %>
+                <% if (suppliers.length === 0) { %><tr><td colspan="3" class="empty">Sin proveedores todavia</td></tr><% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Compras recientes</h2>
+          <ul class="simple-list">
+            <% purchases.forEach(function(p) { %>
+              <li>
+                <span><%= p.supplier_name || 'Proveedor eliminado' %> - <%= new Date(p.created_at).toLocaleDateString('es-AR') %></span>
+                <strong>$<%= Number(p.total).toFixed(2) %></strong>
+              </li>
+            <% }) %>
+            <% if (purchases.length === 0) { %><li class="empty">Sin compras registradas</li><% } %>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="newSupplierModal">
+    <div class="modal-card">
+      <h2>Nuevo proveedor</h2>
+      <form action="/proveedores" method="POST" class="modal-form">
+        <label>Nombre</label>
+        <input type="text" name="name" required>
+        <label>Telefono</label>
+        <input type="text" name="phone">
+        <label>Email</label>
+        <input type="email" name="email">
+        <label>Notas</label>
+        <textarea name="notes" rows="3"></textarea>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" onclick="AuraUI.closeModal('newSupplierModal')">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="newPurchaseModal">
+    <div class="modal-card">
+      <h2>Registrar compra</h2>
+      <form action="/proveedores/compras" method="POST" id="purchaseForm" class="modal-form">
+        <label>Proveedor</label>
+        <select name="supplier_id">
+          <option value="">Sin proveedor</option>
+          <% suppliers.forEach(function(s) { %><option value="<%= s.id %>"><%= s.name %></option><% }) %>
+        </select>
+
+        <div id="purchaseItems"></div>
+        <button type="button" class="btn-ghost btn-small" id="addPurchaseItem">Agregar producto</button>
+        <input type="hidden" name="items" id="purchaseItemsInput">
+
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" onclick="AuraUI.closeModal('newPurchaseModal')">Cancelar</button>
+          <button type="submit" class="btn-primary">Registrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>window.AURA_PRODUCTS = <%- JSON.stringify(products) %></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/purchases.js"></script>
+</body>
+</html>

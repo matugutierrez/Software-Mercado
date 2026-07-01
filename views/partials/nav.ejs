@@ -1,0 +1,48 @@
+<aside class="shell-nav">
+  <div class="brand">
+    <span class="brand-orb"></span>
+    <span class="brand-name">Aura</span>
+  </div>
+
+  <nav class="nav-links">
+    <a href="/" class="nav-link <%= active === 'dashboard' ? 'active' : '' %>">
+      <span class="nav-icon">&#9679;</span> Panel
+    </a>
+    <a href="/pos" class="nav-link <%= active === 'pos' ? 'active' : '' %>">
+      <span class="nav-icon">&#9678;</span> Vender
+    </a>
+    <a href="/productos" class="nav-link <%= active === 'productos' ? 'active' : '' %>">
+      <span class="nav-icon">&#9635;</span> Productos
+    </a>
+    <a href="/caja" class="nav-link <%= active === 'caja' ? 'active' : '' %>">
+      <span class="nav-icon">&#9670;</span> Caja
+    </a>
+    <a href="/clientes" class="nav-link <%= active === 'clientes' ? 'active' : '' %>">
+      <span class="nav-icon">&#9737;</span> Clientes
+    </a>
+    <% if (user && user.role === 'admin') { %>
+    <a href="/proveedores" class="nav-link <%= active === 'proveedores' ? 'active' : '' %>">
+      <span class="nav-icon">&#9673;</span> Proveedores
+    </a>
+    <a href="/reportes" class="nav-link <%= active === 'reportes' ? 'active' : '' %>">
+      <span class="nav-icon">&#9650;</span> Reportes
+    </a>
+    <a href="/reportes/prediccion" class="nav-link <%= active === 'prediccion' ? 'active' : '' %>">
+      <span class="nav-icon">&#10022;</span> Prediccion
+    </a>
+    <% } %>
+  </nav>
+
+  <div class="nav-footer">
+    <div class="user-chip">
+      <span class="user-avatar"><%= user ? user.fullName.charAt(0) : '?' %></span>
+      <div>
+        <div class="user-name"><%= user ? user.fullName : '' %></div>
+        <div class="user-role"><%= user ? user.role : '' %></div>
+      </div>
+    </div>
+    <form action="/logout" method="POST">
+      <button type="submit" class="btn-ghost btn-small">Salir</button>
+    </form>
+  </div>
+</aside>

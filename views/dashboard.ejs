@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head', { title: 'Aura - Panel' }) %>
+</head>
+<body>
+  <div class="shell">
+    <%- include('partials/nav', { active: 'dashboard' }) %>
+    <main class="shell-main">
+      <header class="page-header">
+        <div>
+          <h1>Hola, <%= user.fullName.split(' ')[0] %></h1>
+          <p class="page-subtitle">Asi viene el dia en tu kiosco</p>
+        </div>
+        <a href="/pos" class="btn-primary">Ir a vender</a>
+      </header>
+
+      <section class="stat-grid">
+        <div class="stat-card stat-glow-a">
+          <span class="stat-label">Ventas de hoy</span>
+          <span class="stat-value">$<%= Number(todaySummary.revenue).toLocaleString('es-AR', {minimumFractionDigits: 2}) %></span>
+          <span class="stat-foot"><%= todaySummary.sales_count %> tickets</span>
+        </div>
+        <div class="stat-card stat-glow-b">
+          <span class="stat-label">Productos activos</span>
+          <span class="stat-value"><%= productCount %></span>
+          <span class="stat-foot">en catalogo</span>
+        </div>
+        <div class="stat-card stat-glow-c">
+          <span class="stat-label">Clientes</span>
+          <span class="stat-value"><%= customerCount %></span>
+          <span class="stat-foot">registrados</span>
+        </div>
+        <div class="stat-card stat-glow-d">
+          <span class="stat-label">Alertas de stock</span>
+          <span class="stat-value"><%= lowStock.length %></span>
+          <span class="stat-foot">productos bajos</span>
+        </div>
+      </section>
+
+      <section class="panel-grid">
+        <div class="panel">
+          <h2>Ventas de los ultimos 7 dias</h2>
+          <div id="weekChart" class="chart-box"></div>
+        </div>
+        <div class="panel">
+          <h2>Mas vendidos hoy</h2>
+          <ul class="simple-list">
+            <% topToday.forEach(function(p) { %>
+              <li><span><%= p.product_name %></span><strong><%= p.quantity %></strong></li>
+            <% }) %>
+            <% if (topToday.length === 0) { %><li class="empty">Todavia no hay ventas hoy</li><% } %>
+          </ul>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Productos con poco stock</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Producto</th><th>Stock</th><th>Minimo</th><th></th></tr></thead>
+            <tbody>
+              <% lowStock.forEach(function(p) { %>
+                <tr>
+                  <td><%= p.name %></td>
+                  <td><span class="pill pill-warning"><%= p.stock %> <%= p.unit %></span></td>
+                  <td><%= p.min_stock %></td>
+                  <td><a href="/productos" class="link-action">Reponer</a></td>
+                </tr>
+              <% }) %>
+              <% if (lowStock.length === 0) { %>
+                <tr><td colspan="4" class="empty">Todo tu stock esta en buen nivel</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/charts.js"></script>
+  <script>
+    AuraCharts.bars(document.getElementById('weekChart'), <%- JSON.stringify(weekSales) %>)
+  </script>
+</body>
+</html>

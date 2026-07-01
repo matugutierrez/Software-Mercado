@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head', { title: 'Aura - Prediccion' }) %>
+</head>
+<body>
+  <div class="shell">
+    <%- include('partials/nav', { active: 'prediccion' }) %>
+    <main class="shell-main">
+      <header class="page-header">
+        <div>
+          <h1>Prediccion de demanda</h1>
+          <p class="page-subtitle">Aura analiza tus ventas y te dice que reponer antes de que se termine</p>
+        </div>
+      </header>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Producto</th><th>Stock actual</th><th>Promedio diario</th><th>Tendencia</th><th>Se agota en</th><th>Sugerido comprar (7 dias)</th></tr>
+            </thead>
+            <tbody>
+              <% forecasts.forEach(function(f) { %>
+                <tr>
+                  <td><%= f.product.name %></td>
+                  <td><%= f.product.stock %> <%= f.product.unit %></td>
+                  <td><%= f.forecast.dailyAverage %></td>
+                  <td>
+                    <span class="pill <%= f.forecast.trend === 'en alza' ? 'pill-warning' : f.forecast.trend === 'en baja' ? 'pill-muted' : 'pill-ok' %>">
+                      <%= f.forecast.trend %>
+                    </span>
+                  </td>
+                  <td class="<%= f.stockoutDays !== null && f.stockoutDays <= 3 ? 'text-danger' : '' %>">
+                    <%= f.stockoutDays === null ? 'sin ventas recientes' : f.stockoutDays + ' dias' %>
+                  </td>
+                  <td><strong><%= f.forecast.suggested %></strong> <%= f.product.unit %></td>
+                </tr>
+              <% }) %>
+              <% if (forecasts.length === 0) { %>
+                <tr><td colspan="6" class="empty">Todavia no hay suficientes ventas para predecir demanda</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

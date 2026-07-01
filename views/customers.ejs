@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head', { title: 'Aura - Clientes' }) %>
+</head>
+<body>
+  <div class="shell">
+    <%- include('partials/nav', { active: 'clientes' }) %>
+    <main class="shell-main">
+      <header class="page-header">
+        <div>
+          <h1>Clientes</h1>
+          <p class="page-subtitle">Tu cartera de clientes habituales</p>
+        </div>
+        <button class="btn-primary" onclick="AuraUI.openModal('newCustomerModal')">Nuevo cliente</button>
+      </header>
+
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nombre</th><th>Telefono</th><th>Email</th><th>Notas</th><th></th></tr></thead>
+            <tbody>
+              <% customers.forEach(function(c) { %>
+                <tr>
+                  <td><%= c.name %></td>
+                  <td><%= c.phone || '-' %></td>
+                  <td><%= c.email || '-' %></td>
+                  <td class="muted"><%= c.notes || '' %></td>
+                  <td class="row-actions">
+                    <form action="/clientes/<%= c.id %>/eliminar" method="POST" class="inline">
+                      <button type="submit" class="link-action link-danger">Eliminar</button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+              <% if (customers.length === 0) { %>
+                <tr><td colspan="5" class="empty">Todavia no agregaste clientes</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal" id="newCustomerModal">
+    <div class="modal-card">
+      <h2>Nuevo cliente</h2>
+      <form action="/clientes" method="POST" class="modal-form">
+        <label>Nombre</label>
+        <input type="text" name="name" required>
+        <label>Telefono</label>
+        <input type="text" name="phone">
+        <label>Email</label>
+        <input type="email" name="email">
+        <label>Notas</label>
+        <textarea name="notes" rows="3"></textarea>
+        <div class="modal-actions">
+          <button type="button" class="btn-ghost" onclick="AuraUI.closeModal('newCustomerModal')">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/ui.js"></script>
+</body>
+</html>

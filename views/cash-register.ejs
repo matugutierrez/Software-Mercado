@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head', { title: 'Aura - Caja' }) %>
+</head>
+<body>
+  <div class="shell">
+    <%- include('partials/nav', { active: 'caja' }) %>
+    <main class="shell-main">
+      <header class="page-header">
+        <div>
+          <h1>Caja</h1>
+          <p class="page-subtitle">Control de apertura, movimientos y cierre</p>
+        </div>
+      </header>
+
+      <% if (!session) { %>
+        <section class="panel pos-closed">
+          <h2>La caja esta cerrada</h2>
+          <form action="/caja/abrir" method="POST" class="inline-form">
+            <input type="number" step="0.01" name="opening_amount" placeholder="Monto inicial" required>
+            <button type="submit" class="btn-primary">Abrir caja</button>
+          </form>
+        </section>
+      <% } else { %>
+        <section class="stat-grid">
+          <div class="stat-card stat-glow-a">
+            <span class="stat-label">Apertura</span>
+            <span class="stat-value">$<%= Number(session.opening_amount).toFixed(2) %></span>
+            <span class="stat-foot"><%= new Date(session.opened_at).toLocaleString('es-AR') %></span>
+          </div>
+          <div class="stat-card stat-glow-b">
+            <span class="stat-label">Ventas en efectivo</span>
+            <span class="stat-value">$<%= Number(salesTotal).toFixed(2) %></span>
+          </div>
+        </section>
+
+        <section class="panel-grid">
+          <div class="panel">
+            <h2>Registrar movimiento</h2>
+            <form action="/caja/movimiento" method="POST" class="modal-form">
+              <label>Tipo</label>
+              <select name="type">
+                <option value="ingreso">Ingreso</option>
+                <option value="egreso">Egreso</option>
+              </select>
+              <label>Monto</label>
+              <input type="number" step="0.01" name="amount" required>
+              <label>Descripcion</label>
+              <input type="text" name="description" placeholder="Ej: retiro para cambio">
+              <button type="submit" class="btn-primary">Registrar</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h2>Movimientos de hoy</h2>
+            <ul class="simple-list">
+              <% movements.forEach(function(m) { %>
+                <li>
+                  <span><%= m.type === 'ingreso' ? 'Ingreso' : 'Egreso' %> - <%= m.description || '' %></span>
+                  <strong class="<%= m.type === 'ingreso' ? 'text-ok' : 'text-danger' %>"><%= m.type === 'ingreso' ? '+' : '-' %>$<%= Number(m.amount).toFixed(2) %></strong>
+                </li>
+              <% }) %>
+              <% if (movements.length === 0) { %><li class="empty">Sin movimientos</li><% } %>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Cerrar caja</h2>
+          <form action="/caja/cerrar" method="POST" class="inline-form">
+            <input type="number" step="0.01" name="closing_amount" placeholder="Monto contado en caja" required>
+            <button type="submit" class="btn-primary">Cerrar caja</button>
+          </form>
+        </section>
+      <% } %>
+
+      <section class="panel">
+        <h2>Historial de cierres</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Cajero</th><th>Apertura</th><th>Cierre</th><th>Esperado</th><th>Diferencia</th><th>Fecha</th></tr></thead>
+            <tbody>
+              <% history.forEach(function(h) { %>
+                <tr>
+                  <td><%= h.full_name %></td>
+                  <td>$<%= Number(h.opening_amount).toFixed(2) %></td>
+                  <td>$<%= Number(h.closing_amount).toFixed(2) %></td>
+                  <td>$<%= Number(h.expected_amount).toFixed(2) %></td>
+                  <td class="<%= Number(h.difference) < 0 ? 'text-danger' : 'text-ok' %>">$<%= Number(h.difference).toFixed(2) %></td>
+                  <td><%= new Date(h.closed_at).toLocaleString('es-AR') %></td>
+                </tr>
+              <% }) %>
+              <% if (history.length === 0) { %><tr><td colspan="6" class="empty">Sin cierres todavia</td></tr><% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

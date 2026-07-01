@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <%- include('partials/head', { title: 'Recibo #' + sale.id }) %>
+</head>
+<body class="receipt-body">
+  <div class="receipt">
+    <div class="receipt-brand">Aura</div>
+    <div class="receipt-line">Ticket #<%= sale.id %></div>
+    <div class="receipt-line"><%= new Date(sale.created_at).toLocaleString('es-AR') %></div>
+    <div class="receipt-line">Cajero: <%= sale.cashier_name %></div>
+    <% if (sale.customer_name) { %><div class="receipt-line">Cliente: <%= sale.customer_name %></div><% } %>
+    <hr>
+    <% items.forEach(function(it) { %>
+      <div class="receipt-item">
+        <span><%= it.quantity %> x <%= it.product_name %></span>
+        <span>$<%= Number(it.subtotal).toFixed(2) %></span>
+      </div>
+    <% }) %>
+    <hr>
+    <div class="receipt-item"><span>Subtotal</span><span>$<%= Number(sale.subtotal).toFixed(2) %></span></div>
+    <% if (Number(sale.discount) > 0) { %>
+      <div class="receipt-item"><span>Descuento</span><span>-$<%= Number(sale.discount).toFixed(2) %></span></div>
+    <% } %>
+    <div class="receipt-item receipt-total"><span>Total</span><span>$<%= Number(sale.total).toFixed(2) %></span></div>
+    <div class="receipt-item"><span>Pago (<%= sale.payment_method %>)</span><span>$<%= Number(sale.amount_paid).toFixed(2) %></span></div>
+    <% if (Number(sale.change_given) > 0) { %>
+      <div class="receipt-item"><span>Vuelto</span><span>$<%= Number(sale.change_given).toFixed(2) %></span></div>
+    <% } %>
+    <div class="receipt-footer">Gracias por tu compra</div>
+    <button onclick="window.print()" class="btn-primary btn-full no-print">Imprimir</button>
+  </div>
+</body>
+</html>

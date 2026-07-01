@@ -1,0 +1,29 @@
+# Blueprint de Render. Podes usar esto con "New +" > "Blueprint" para crear
+# automaticamente el Web Service y la base de datos, o ignorarlo y crear
+# los recursos a mano desde el dashboard (vos dijiste que armas el Postgres
+# por tu cuenta, asi que esto es solo de referencia/opcional).
+
+services:
+  - type: web
+    name: kiosco-pos
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm run migrate && npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kiosco-pos-db
+          property: connectionString
+      - key: DATABASE_SSL
+        value: "true"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: admin123
+
+databases:
+  - name: kiosco-pos-db
+    plan: free
