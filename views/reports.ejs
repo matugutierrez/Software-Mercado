@@ -14,9 +14,9 @@
         </div>
         <form method="GET" class="inline-form">
           <select name="range" onchange="this.form.submit()">
-            <option value="7" <%= range === '7' ? 'selected' : '' %>>Ultimos 7 dias</option>
-            <option value="30" <%= range === '30' ? 'selected' : '' %>>Ultimos 30 dias</option>
-            <option value="90" <%= range === '90' ? 'selected' : '' %>>Ultimos 90 dias</option>
+            <option value="7" <%= range === 7 ? 'selected' : '' %>>Ultimos 7 dias</option>
+            <option value="30" <%= range === 30 ? 'selected' : '' %>>Ultimos 30 dias</option>
+            <option value="90" <%= range === 90 ? 'selected' : '' %>>Ultimos 90 dias</option>
           </select>
         </form>
       </header>
@@ -25,14 +25,17 @@
         <div class="stat-card stat-glow-a">
           <span class="stat-label">Ingresos</span>
           <span class="stat-value">$<%= Number(summary.revenue).toLocaleString('es-AR', {minimumFractionDigits: 2}) %></span>
+          <span class="stat-foot">en el periodo</span>
         </div>
         <div class="stat-card stat-glow-b">
           <span class="stat-label">Ventas</span>
           <span class="stat-value"><%= summary.sales_count %></span>
+          <span class="stat-foot">transacciones</span>
         </div>
         <div class="stat-card stat-glow-c">
           <span class="stat-label">Ticket promedio</span>
-          <span class="stat-value">$<%= Number(summary.avg_ticket).toFixed(2) %></span>
+          <span class="stat-value">$<%= Number(summary.avg_ticket).toLocaleString('es-AR', {minimumFractionDigits: 2}) %></span>
+          <span class="stat-foot">por venta</span>
         </div>
       </section>
 
@@ -47,42 +50,48 @@
         </div>
       </section>
 
-      <section class="panel">
-        <h2>Productos mas vendidos</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Producto</th><th>Cantidad</th><th>Total</th></tr></thead>
-            <tbody>
-              <% topProducts.forEach(function(p) { %>
-                <tr><td><%= p.product_name %></td><td><%= p.quantity %></td><td>$<%= Number(p.total).toFixed(2) %></td></tr>
-              <% }) %>
-              <% if (topProducts.length === 0) { %><tr><td colspan="3" class="empty">Sin datos en este periodo</td></tr><% } %>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <div class="panel-grid">
+        <section class="panel">
+          <h2>Productos mas vendidos</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Producto</th><th>Cantidad</th><th>Total</th></tr></thead>
+              <tbody>
+                <% topProducts.forEach(function(p) { %>
+                  <tr><td><%= p.product_name %></td><td><strong><%= p.quantity %></strong></td><td>$<%= Number(p.total).toLocaleString('es-AR', {minimumFractionDigits: 2}) %></td></tr>
+                <% }) %>
+                <% if (topProducts.length === 0) { %><tr><td colspan="3" class="empty">Sin datos en este periodo</td></tr><% } %>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-      <section class="panel">
-        <h2>Stock bajo</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Producto</th><th>Stock</th><th>Minimo</th></tr></thead>
-            <tbody>
-              <% lowStock.forEach(function(p) { %>
-                <tr><td><%= p.name %></td><td><%= p.stock %></td><td><%= p.min_stock %></td></tr>
-              <% }) %>
-              <% if (lowStock.length === 0) { %><tr><td colspan="3" class="empty">Todo el stock esta en buen nivel</td></tr><% } %>
-            </tbody>
-          </table>
-        </div>
-      </section>
+        <section class="panel">
+          <h2>Stock bajo</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Producto</th><th>Stock</th><th>Minimo</th></tr></thead>
+              <tbody>
+                <% lowStock.forEach(function(p) { %>
+                  <tr>
+                    <td><%= p.name %></td>
+                    <td><span class="pill <%= Number(p.stock) <= 0 ? 'pill-danger' : 'pill-warning' %>"><%= p.stock %> <%= p.unit %></span></td>
+                    <td><%= p.min_stock %></td>
+                  </tr>
+                <% }) %>
+                <% if (lowStock.length === 0) { %><tr><td colspan="3" class="empty">Todo el stock esta en buen nivel</td></tr><% } %>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
     </main>
   </div>
 
   <script src="/js/charts.js"></script>
   <script>
-    AuraCharts.line(document.getElementById('salesChart'), <%- JSON.stringify(salesByDay) %>)
-    AuraCharts.donut(document.getElementById('paymentChart'), <%- JSON.stringify(byPaymentMethod) %>)
+    AuraCharts.line(document.getElementById('salesChart'), <%= JSON.stringify(salesByDay).replace(/<\//g, '<\\/') %>)
+    AuraCharts.donut(document.getElementById('paymentChart'), <%= JSON.stringify(byPaymentMethod).replace(/<\//g, '<\\/') %>)
   </script>
 </body>
 </html>

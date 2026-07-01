@@ -80,7 +80,7 @@
 
   <script src="/js/charts.js"></script>
   <script>
-    AuraCharts.bars(document.getElementById('weekChart'), <%- JSON.stringify(weekSales) %>)
+    AuraCharts.bars(document.getElementById('weekChart'), <%= JSON.stringify(weekSales).replace(/<\//g, '<\\/') %>)
   </script>
 </body>
 </html>

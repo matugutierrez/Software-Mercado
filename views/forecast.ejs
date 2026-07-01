@@ -14,25 +14,55 @@
         </div>
       </header>
 
+      <section class="stat-grid">
+        <div class="stat-card stat-glow-a">
+          <span class="stat-label">Productos evaluados</span>
+          <span class="stat-value"><%= totalEvaluated %></span>
+          <span class="stat-foot">con actividad o stock bajo</span>
+        </div>
+        <div class="stat-card stat-glow-d">
+          <span class="stat-label">En riesgo de agotarse</span>
+          <span class="stat-value"><%= atRisk %></span>
+          <span class="stat-foot">stock para 3 dias o menos</span>
+        </div>
+        <div class="stat-card stat-glow-e">
+          <span class="stat-label">Sin stock</span>
+          <span class="stat-value"><%= outOfStock %></span>
+          <span class="stat-foot">productos agotados</span>
+        </div>
+      </section>
+
       <section class="panel">
+        <h2>Analisis por producto</h2>
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>Producto</th><th>Stock actual</th><th>Promedio diario</th><th>Tendencia</th><th>Se agota en</th><th>Sugerido comprar (7 dias)</th></tr>
+              <tr>
+                <th>Producto</th>
+                <th>Stock actual</th>
+                <th>Promedio diario</th>
+                <th>Tendencia</th>
+                <th>Se agota en</th>
+                <th>Sugerido comprar (7 dias)</th>
+              </tr>
             </thead>
             <tbody>
               <% forecasts.forEach(function(f) { %>
-                <tr>
-                  <td><%= f.product.name %></td>
-                  <td><%= f.product.stock %> <%= f.product.unit %></td>
+                <tr class="<%= f.stockoutDays !== null && f.stockoutDays <= 0 ? 'row-critical' : '' %>">
+                  <td><strong><%= f.product.name %></strong></td>
+                  <td>
+                    <span class="pill <%= Number(f.product.stock) <= 0 ? 'pill-danger' : Number(f.product.stock) <= Number(f.product.min_stock) ? 'pill-warning' : 'pill-ok' %>">
+                      <%= f.product.stock %> <%= f.product.unit %>
+                    </span>
+                  </td>
                   <td><%= f.forecast.dailyAverage %></td>
                   <td>
-                    <span class="pill <%= f.forecast.trend === 'en alza' ? 'pill-warning' : f.forecast.trend === 'en baja' ? 'pill-muted' : 'pill-ok' %>">
+                    <span class="pill <%= f.forecast.trend === 'en alza' ? 'pill-warning' : f.forecast.trend === 'en baja' ? 'pill-danger' : f.forecast.trend === 'sin datos' ? 'pill-muted' : 'pill-ok' %>">
                       <%= f.forecast.trend %>
                     </span>
                   </td>
-                  <td class="<%= f.stockoutDays !== null && f.stockoutDays <= 3 ? 'text-danger' : '' %>">
-                    <%= f.stockoutDays === null ? 'sin ventas recientes' : f.stockoutDays + ' dias' %>
+                  <td class="<%= f.stockoutDays !== null && f.stockoutDays <= 3 ? 'text-danger font-bold' : '' %>">
+                    <%= f.stockoutDays === null ? '—' : f.stockoutDays + ' dias' %>
                   </td>
                   <td><strong><%= f.forecast.suggested %></strong> <%= f.product.unit %></td>
                 </tr>

@@ -100,7 +100,7 @@
     </div>
   </div>
 
-  <script>window.AURA_PRODUCTS = <%- JSON.stringify(products) %></script>
+  <script>window.AURA_PRODUCTS = <%= JSON.stringify(products).replace(/<\//g, '<\\/') %></script>
   <script src="/js/ui.js"></script>
   <script src="/js/purchases.js"></script>
 </body>

@@ -6,7 +6,8 @@ const { movingAverageForecast, daysUntilStockout } = require('../utils/forecast'
 const router = express.Router()
 
 router.get('/', requireAuth, requireRole('admin'), async (req, res) => {
-  const range = req.query.range || '30'
+  const raw = parseInt(req.query.range, 10)
+  const range = [7, 30, 90].includes(raw) ? raw : 30
 
   const salesByDay = await query(
     `SELECT to_char(date_trunc('day', created_at), 'YYYY-MM-DD') AS day, SUM(total) AS total, COUNT(*) AS count
@@ -16,10 +17,10 @@ router.get('/', requireAuth, requireRole('admin'), async (req, res) => {
   )
 
   const topProducts = await query(
-    `SELECT product_name, SUM(quantity) AS quantity, SUM(subtotal) AS total
+    `SELECT si.product_name, SUM(si.quantity) AS quantity, SUM(si.subtotal) AS total
      FROM sale_items si JOIN sales s ON s.id = si.sale_id
      WHERE s.created_at > now() - ($1 || ' days')::interval
-     GROUP BY product_name ORDER BY total DESC LIMIT 10`,
+     GROUP BY si.product_name ORDER BY total DESC LIMIT 10`,
     [range]
   )
 
@@ -74,7 +75,11 @@ router.get('/prediccion', requireAuth, requireRole('admin'), async (req, res) =>
 
   forecasts.sort((a, b) => (a.stockoutDays ?? 999) - (b.stockoutDays ?? 999))
 
-  res.render('forecast', { forecasts })
+  const atRisk = forecasts.filter((f) => f.stockoutDays !== null && f.stockoutDays <= 3)
+  const outOfStock = forecasts.filter((f) => Number(f.product.stock) <= 0)
+  const totalEvaluated = forecasts.length
+
+  res.render('forecast', { forecasts, atRisk: atRisk.length, outOfStock: outOfStock.length, totalEvaluated })
 })
 
 module.exports = router
