@@ -806,8 +806,78 @@ tbody tr.row-critical td { border-bottom-color: rgba(255, 93, 108, 0.12); }
 @media (max-width: 600px) {
   .shell-main { padding: 14px; }
   .page-header h1 { font-size: 22px; }
-  .stat-grid { grid-template-columns: 1fr 1fr; }
-  .product-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  .page-header { flex-direction: column; align-items: flex-start; }
+  .header-actions { width: 100%; }
+  .header-actions .btn-primary,
+  .header-actions .btn-ghost { flex: 1; justify-content: center; }
+  .stat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card { padding: 16px 18px; }
+  .stat-value { font-size: 22px; }
+  .product-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+  .product-tile { padding: 12px; }
   .form-row { grid-template-columns: 1fr; }
-  .modal-card { width: calc(100% - 20px); margin: 10px; }
+  .modal-card { width: calc(100% - 20px); margin: 10px; padding: 20px; }
+  .modal-card.modal-small { width: calc(100% - 20px); }
+  .modal-card.modal-large { width: calc(100% - 20px); }
+  .panel { padding: 16px; margin-bottom: 16px; }
+  .panel h2 { font-size: 14px; margin-bottom: 12px; }
+  .shell-nav { padding: 10px 12px; gap: 4px; }
+  .nav-links { gap: 1px; padding-top: 4px; }
+  .nav-link { padding: 8px 10px; font-size: 12px; }
+  .brand-name { font-size: 18px; }
+  .brand-orb { width: 26px; height: 26px; }
+  .user-chip { padding: 6px 8px; }
+  .user-avatar { width: 28px; height: 28px; font-size: 12px; }
+  .user-name { font-size: 12px; }
+  .user-role { font-size: 10px; }
+  table { font-size: 12px; }
+  thead th { padding: 8px 10px; font-size: 10px; }
+  td { padding: 8px 10px; }
+  .simple-list li { padding: 10px 12px; font-size: 13px; flex-wrap: wrap; gap: 6px; }
+  .inline-form input, .inline-form select { padding: 8px 12px; font-size: 13px; flex: 1; min-width: 100px; }
+  .login-card { width: calc(100% - 32px); padding: 28px 24px; }
+  .login-glow { width: 300px; height: 300px; }
+  .error-scene { padding: 16px; }
+  .error-card h1 { font-size: 20px; }
+  .pos-cart { padding: 16px; gap: 12px; }
+  .pos-cart h2 { font-size: 15px; }
+  .cart-item { padding: 8px 10px; flex-wrap: wrap; }
+  .cart-item-name { font-size: 12px; }
+  .cart-item-price { font-size: 12px; min-width: auto; }
+  .cart-summary { gap: 8px; }
+  .summary-row { font-size: 13px; }
+  .summary-total { font-size: 17px; }
+  .payment-chip { font-size: 12px; padding: 8px; }
+  .cash-row { flex-wrap: wrap; }
+  .cash-row input { min-width: 120px; }
+  .product-tile .tile-name { font-size: 12px; }
+  .product-tile .tile-price { font-size: 13px; }
+  .chart-box { height: 180px; }
+  .purchase-item-row { grid-template-columns: 1fr; gap: 6px; }
+  .purchase-item-row select, .purchase-item-row input { width: 100%; }
+  .pos-search input { padding: 10px 14px; font-size: 14px; }
+  .search-form { max-width: 100%; }
+  .chip { padding: 5px 12px; font-size: 12px; }
+  .btn-primary, .btn-ghost, .btn-danger { padding: 8px 16px; font-size: 13px; }
+  .btn-charge { padding: 12px; font-size: 14px; }
+  .cart-customer input { padding: 8px 12px; font-size: 13px; }
+}
+
+@media (min-width: 601px) and (max-width: 980px) {
+  .shell-main { padding: 24px 28px; }
+  .stat-grid { gap: 14px; }
+  .modal-card { width: calc(100% - 40px); }
+  .login-card { width: 420px; }
+  .page-header h1 { font-size: 24px; }
+  .panel { padding: 20px; }
+  .stat-card { padding: 18px 20px; }
+  .product-grid { gap: 10px; }
+}
+
+@media (max-width: 400px) {
+  .stat-grid { grid-template-columns: 1fr; }
+  .product-grid { grid-template-columns: repeat(2, 1fr); }
+  .shell-main { padding: 10px; }
+  .modal-card { padding: 16px; }
+  .brand-name { font-size: 16px; }
 }
